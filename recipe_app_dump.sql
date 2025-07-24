@@ -36,11 +36,12 @@ CREATE TABLE `categoria` (
 -- Dumping data for table `categoria`
 --
 
-INSERT INTO `categoria` (`id_categoria`, `nome_categoria`) VALUES
-(4, 'Latino-Americana'),
-(5, 'Prato Principal'),
-(6, 'Comida de Rua'),
-(7, 'Típico Colombiano');
+INSERT INTO Categoria (id_categoria, nome_categoria)
+VALUES 
+  (1, 'Sobremesa'),
+  (2, 'Vegetariana'),
+  (3, 'Rápida');
+
 
 -- --------------------------------------------------------
 
