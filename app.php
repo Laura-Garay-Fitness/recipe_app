@@ -7,7 +7,7 @@
 // Criar uma conexão à base dados
 //----------------------------------------------------------
 
-$con = mysqli_connect('127.0.0.1', 'root', '', 'recipe_app');
+$con = mysqli_connect('127.0.0.1', 'root', '', '5425_laura');
 
 //-----------------------------------------------------------
 //verificar se a conexão foi concluida
