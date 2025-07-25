@@ -37,7 +37,12 @@ while (!$fim) {
     echo "8 - Desassociar receita de categoria\n";
     echo "9 - Ver receitas por categoria\n";
     echo "10. Apagar categoria\n";
-
+    echo "11. Criar ingrediente\n";
+    echo "12. Listar Ingrediente\n";
+    echo "13. Associar ingredientes a Receitas\n";
+    echo "14. Atualizar quantidade/unidade\n";
+    echo "15. Remover Ingrediente Receita\n";
+    echo "16. Mostrar Detalhes Receita\n";
     echo "0 - Sair\n";
 
     $opcao = readline("Escolha a opção: ");
@@ -86,7 +91,24 @@ while (!$fim) {
 
         case 10: apagarCategoria($con);
              break;
+        
+        case 11: criarIngrediente($con);
+             break;
+        
+        case 12: listarIngredientes($con);
+             break;
+        
+        case 13: associarIngredienteReceita($con);
+             break;
+        
+        case 14: atualizarIngredienteReceita($con);
+             break;
 
+        case 15: removerIngredienteReceita($con);
+             break;
+        
+        case 16: mostrarDetalhesReceita($con);
+             break;
 
         default:
             echo "Opção inválida.\n";
@@ -283,6 +305,129 @@ function apagarCategoria($con) {
     $stmt->close();
 }
 
+// -------------------------------------------------------------------
+// Criar Ingrediente
+// ------------------------------------------------------------------
+
+function criarIngrediente($con) {
+    echo "\n--- Criar Ingrediente ---\n";
+    $nome_ingrediente = readline("Nome do ingrediente: ");
+    $sql = "INSERT INTO ingrediente (nome_ingrediente) VALUES ('$nome_ingrediente')";
+    if (mysqli_query($con, $sql)) {
+        echo " Ingrediente criado com sucesso!\n";
+    } else {
+        echo " Erro ao criar ingrediente.\n";
+    }
+}
+
+// -------------------------------------------------------------------
+// Listar Ingrediente
+// ------------------------------------------------------------------
+
+function listarIngredientes($con) {
+    echo "\n--- Lista de Ingredientes ---\n";
+    $sql = "SELECT * FROM ingrediente";
+    $result = mysqli_query($con, $sql);
+    while ($row = mysqli_fetch_assoc($result)) {
+        echo "ID: {$row['id_ingrediente']} | Nome: {$row['nome_ingrediente']}\n";
+    }
+}
+
+// -------------------------------------------------------------------
+// Associar ingredientes a receitas com quantidade e unidade 
+// ------------------------------------------------------------------
+
+function associarIngredienteReceita($con) {
+    echo "\n--- Associar Ingrediente à Receita ---\n";
+    listarReceitas($con);
+    $id_receita = readline("ID da receita: ");
+    listarIngredientes($con);
+    $id_ingrediente = readline("ID do ingrediente: ");
+    $quantidade = readline("Quantidade: ");
+    $unidade_medida = readline("Unidade (ex: g, ml): ");
+
+    $sql = "INSERT INTO receitaingrediente (id_receita, id_ingrediente, quantidade, unidade_medida)
+            VALUES ($id_receita, $id_ingrediente, $quantidade, '$unidade_medida')";
+
+    if (mysqli_query($con, $sql)) {
+        echo " Ingrediente associado com sucesso!\n";
+    } else {
+        echo " Erro ao associar ingrediente.\n";
+    }
+}
+
+
+// -------------------------------------------------------------------
+// Atualizar quantidade/unidade de ingredientes de uma receita 
+// ------------------------------------------------------------------
+
+function atualizarIngredienteReceita($con) {
+    echo "\n--- Atualizar Ingrediente de Receita ---\n";
+    $id_receita = readline("ID da receita: ");
+    $id_ingrediente = readline("ID do ingrediente: ");
+    $quantidade = readline("Nova quantidade: ");
+    $unidade_medida = readline("Nova unidade: ");
+
+    $sql = "UPDATE receitaingrediente
+            SET quantidade = $quantidade, unidade_medida = '$unidade_medida'
+            WHERE id_receita = $id_receita AND id_ingrediente = $id_ingrediente";
+
+    if (mysqli_query($con, $sql)) {
+        echo " Ingrediente atualizado com sucesso!\n";
+    } else {
+        echo " Erro ao atualizar ingrediente.\n";
+    }
+}
+
+// -------------------------------------------------------------------
+// Remover ingredientes de uma receita
+// ------------------------------------------------------------------
+
+function removerIngredienteReceita($con) {
+    echo "\n--- Remover Ingrediente de Receita ---\n";
+    $id_receita = readline("ID da receita: ");
+    $id_ingrediente = readline("ID do ingrediente: ");
+
+    $sql = "DELETE FROM receitaingrediente WHERE id_receita = $id_receita AND id_ingrediente = $id_ingrediente";
+
+    if (mysqli_query($con, $sql)) {
+        echo " Ingrediente removido com sucesso!\n";
+    } else {
+        echo " Erro ao remover ingrediente.\n";
+    }
+}
+// -------------------------------------------------------------------
+// Remover ingredientes de uma receita
+// ------------------------------------------------------------------
+
+function mostrarDetalhesReceita($con) {
+    echo "\n--- Detalhes da Receita ---\n";
+    listarReceitas($con);
+    $id_receita = readline("ID da receita: ");
+
+    $sql = "SELECT r.nome AS nome_receita, r.descricao_preparacao, r.tempo_preparacao, r.numero_doses,
+                   i.nome AS nome_ingrediente, ri.quantidade, ri.unidade_medida
+            FROM receita r
+            LEFT JOIN receitaingrediente ri ON r.id_receita = ri.id_receita
+            LEFT JOIN ingrediente i ON ri.id_ingrediente = i.id_ingrediente
+            WHERE r.id_receita = $id_receita";
+
+    $result = mysqli_query($con, $sql);
+    
+    $primeira = true;
+    while ($row = mysqli_fetch_assoc($result)) {
+        if ($primeira) {
+            echo "\nNome: {$row['nome_receita']}\n";
+            echo "Descrição: {$row['descricao_preparacao']}\n";
+            echo "Tempo: {$row['tempo_preparacao']} min | Doses: {$row['numero_doses']}\n";
+            echo "Ingredientes:\n";
+            $primeira = false;
+        }
+        if ($row['nome_ingrediente']) {
+            echo " - {$row['quantidade']} {$row['unidade_medida']} de {$row['nome_ingrediente']}\n";
+        }
+    }
+}
 
 // -------------------------------------------------------------------
 // Fechar Conexão
