@@ -227,7 +227,7 @@ function criarCategoria($con) {
     $nome_categoria = readline("Nome da categoria: ");
 
     //criar comando SQL
-    $sql = "INSERT INTO categoria ( nome_categoria) VALUES ('$nome_categoria')";
+    $sql = "INSERT INTO categoria (nome_categoria) VALUES ('$nome_categoria')";
 
     //Executar o comando SQL
     if (mysqli_query($con, $sql)) {
@@ -424,7 +424,7 @@ function mostrarDetalhesReceita($con) {
     $id_receita = readline("ID da receita: ");
 
     $sql = "SELECT r.nome AS nome, r.descricao_preparacao, r.tempo_preparacao, r.numero_doses,
-                   i.nome AS nome_ingrediente, ri.quantidade, ri.unidade_medida
+                   i.nome_ingrediente AS nome_ingrediente, ri.quantidade, ri.unidade_medida
             FROM receita r
             LEFT JOIN receitaingrediente ri ON r.id_receita = ri.id_receita
             LEFT JOIN ingrediente i ON ri.id_ingrediente = i.id_ingrediente
