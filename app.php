@@ -435,7 +435,7 @@ function mostrarDetalhesReceita($con) {
     $primeira = true;
     while ($row = mysqli_fetch_assoc($result)) {
         if ($primeira) {
-            echo "\nNome: {$row['nome_receita']}\n";
+            echo "\nNome: {$row['nome']}\n";
             echo "Descrição: {$row['descricao_preparacao']}\n";
             echo "Tempo: {$row['tempo_preparacao']} min | Doses: {$row['numero_doses']}\n";
             echo "Ingredientes:\n";
