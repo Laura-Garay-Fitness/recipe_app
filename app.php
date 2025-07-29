@@ -465,7 +465,7 @@ function listarReceitasPorCategoria($con) {
         $sql = "SELECT r.* FROM receita r
                 INNER JOIN receitacategoria rc ON r.id_receita = rc.id_receita
                 INNER JOIN categoria c ON c.id_categoria = rc.id_categoria
-                WHERE LOWER(c.nome) = LOWER('$entrada')";
+                WHERE LOWER(c.nome_categoria) = LOWER('$entrada')";
     }
 
     $result = mysqli_query($con, $sql);
